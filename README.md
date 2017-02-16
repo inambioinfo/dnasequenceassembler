@@ -1,11 +1,20 @@
 # dnasequencealigner
 
-##OVERVIEW
+## OVERVIEW
 
 This python package figures out a unique DNA sequence given a maximum of 50 subsequences
 
-Example input:
+## HOW TO USE
 
+```python
+$ virtualenv venv
+$ . venv/bin/activate
+$ pip install -e .
+$ align my_fasta_sequences.txt result_sequence.txt
+```
+
+Example input:
+my_fasta_sequences.txt
 ```python
 >Frag_56
 ATTAGACCTG
@@ -18,12 +27,13 @@ GCCGGAATAC
 ```
 
 Example output:
-
+result_sequence.txt
 ```python
 ATTAGACCTGCCGGAATAC
 ```
 
 ## FASTA PARSER
+[FASTA format](https://en.wikipedia.org/wiki/FASTA_format)
 
 1. no more than 80 characters per license
 2. first line of the FASTA file starts with ">"
