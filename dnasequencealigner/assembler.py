@@ -1,5 +1,5 @@
 
-class Aligner():
+class Assembler():
     """
     input: list of strings. each string is a sequences
     output: one string
@@ -8,7 +8,7 @@ class Aligner():
     def __init__(self,sequences):
         self.sequences = sequences
 
-    def assemble(self):
+    def find_matches(self):
         '''
         must keep track of each sequence
               CCTGCCGGAA
@@ -30,7 +30,7 @@ class Aligner():
             match = False
             for index_b in range(0,num_sequences):
                 if index_a != index_b and not match:
-                    print "matching %s VS %s" % (str(index_a), str(index_b))
+                    # print "matching %s VS %s" % (str(index_a), str(index_b))
                     x = seqs[index_a]
                     y = seqs[index_b]
                     len_x = len(x)
@@ -60,16 +60,40 @@ class Aligner():
                                     match = True
                                     matches.append(
                                         (
-                                            {index_a: (base, x_index)},
-                                            {index_b: (0, y_index)}
+                                            (index_a, (base, x_index)),
+                                            (index_b, (0, y_index))
                                         )
 
                                     )
 
                             else:
                                 break
+        return matches
+
+    def assemble(self):
+
+        matches = self.find_matches()
         for index, match in enumerate(matches):
             print "%s_match" % str(index)
             for d in match:
                 print d
-        return matches
+
+        # start with the first one
+
+        first_match = matches[0]
+        print "first_match", first_match
+        second = first_match[1][0]
+        print "second", second
+
+        order = [match[0], match[1]]
+        #look through all the seconds to find the one that matches
+
+        for match in matches[1:]:
+            potential_match = match[0][1]
+            print "potential_match", potential_match
+            print "hello", second, potential_match
+            if second == potential_match:
+                order.append(match[1])
+                break
+        print order
+        #when do we stop: when we have as many matches in the order as we have  segments
