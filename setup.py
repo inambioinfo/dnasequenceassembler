@@ -2,9 +2,9 @@ from distutils.core import setup
 from setuptools import setup, find_packages
 
 setup(
-    name='dnasequencealigner',
+    name='dnasequenceassembler',
     version='0.0.0',
-    packages=['dnasequencealigner',],
+    packages=['dnasequenceassembler',],
     license='figures out a unique DNA sequence from overlapping DNA sequences',
     long_description=open('README.txt').read(),
     install_requires=[
@@ -12,6 +12,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        align=dnasequencealigner.align:touch
+        assemble=dnasequenceassembler.cmd:touch
     ''',
 )
