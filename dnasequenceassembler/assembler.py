@@ -124,25 +124,15 @@ class Assembler():
             first_match = self.firsts_dict[first_seq_id]
             self.order = [first_seq_id, first_match['second']]
 
-
         print "Total matches: %s" % str(self.total_matches)
-        print "order: ", self.order
 
-        # for k,v in self.firsts_dict.iteritems():
-        #     print k, v
-        # print
-        # for k,v in self.seconds_dict.iteritems():
-        #     print k, v
-        #first figure out the order of matches then figure out the sequence
         while len(self.order) != len(self.sequences):
             end = self.order[-1]
             start = self.order[0]
             if end in self.firsts_dict:
                 self.order.append(self.firsts_dict[end]['second'])
-                print "appended at end", self.order
             elif start in self.seconds_dict:
                 self.order.insert(0,self.seconds_dict[start]['first'])
-                print "appended at beggining", self.order
 
         print self.order
         self.figure_out_sequence()
@@ -165,7 +155,5 @@ class Assembler():
 
             for b in segment_to_add:
                 self.sequence.append(b)
-
-
 
         print ''.join(self.sequence)

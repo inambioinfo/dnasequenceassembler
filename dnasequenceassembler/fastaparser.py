@@ -16,8 +16,20 @@ class FASTAparser():
             content = file.readlines()
 
         sequences = []
+        sequence_ids = []
+        sequence = []
         for line in content:
-            if not line.startswith('>') and ("A" in line or "T" in line or "C" in line or "G" in line):
-                sequences.append(line.strip())
+            if line.startswith('>'):
+                sequence_ids.append(line.strip())
+                if len(sequence) != 0:
+                    sequences.append(''.join(sequence))
+                sequence = []
+            elif ("A" in line or "T" in line or "C" in line or "G" in line):
+                sequence.append(line.strip())
+        sequences.append(''.join(sequence))
+        for sequence in sequences:
+            print len(''.join(sequence))
 
+
+        # import ipdb; ipdb.set_trace()
         return sequences
