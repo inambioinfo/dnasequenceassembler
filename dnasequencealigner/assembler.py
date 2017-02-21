@@ -12,19 +12,25 @@ class Assembler():
         '''
         must keep track of each sequence
               CCTGCCGGAA
+        0123456789012345678
         ATTAGACCTG
+
+           0123456789
            AGACCTGCCG
+
+              0123456789
               CCTGCCGGAA
+
+                 0123456789
                  GCCGGAATAC
         ATTAGACCTGCCGGAATAC
         '''
-        seqs = {}
+        self.seqs = {}
 
         for idx, sequence in enumerate(self.sequences):
-            seqs[idx] = list(sequence)
-        print seqs
+            self.seqs[idx] = list(sequence)
 
-        num_sequences = len(seqs)
+        num_sequences = len(self.sequences)
         match_id = 0
         self.firsts_dict = {}
         self.seconds_dict = {}
@@ -35,8 +41,8 @@ class Assembler():
             for index_b in range(0,num_sequences):
                 if index_a != index_b and not match:
                     # print "matching %s VS %s" % (str(index_a), str(index_b))
-                    x = seqs[index_a]
-                    y = seqs[index_b]
+                    x = self.seqs[index_a]
+                    y = self.seqs[index_b]
                     len_x = len(x)
                     len_y = len(y)
                     min_match_length = max(len_x, len_y) / 2
@@ -139,6 +145,27 @@ class Assembler():
                 print "appended at beggining", self.order
 
         print self.order
+        self.figure_out_sequence()
 
     def figure_out_sequence(self):
-        pass
+        start_seq_index = 0
+
+        range_first_seq = self.firsts_ranges_dict[start_seq_index]
+        stop = range_first_seq[1]
+        self.sequence = self.seqs[start_seq_index][0:stop]
+
+        for seq_id in self.order[1:]:
+            start = self.seconds_ranges_dict[seq_id][1]
+
+            if seq_id == self.order[-1]:
+                segment_to_add = self.seqs[seq_id][start:]
+            else:
+                end = self.firsts_ranges_dict[seq_id][1]
+                segment_to_add = self.seqs[seq_id][start:end]
+
+            for b in segment_to_add:
+                self.sequence.append(b)
+
+
+
+        print ''.join(self.sequence)
