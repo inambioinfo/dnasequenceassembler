@@ -1,12 +1,21 @@
-
+import pprint
 class Assembler():
     """
     input: list of strings. each string is a sequences
     output: one string
     """
+    MATCHING_TOP_KEY = 'match_top'
+    MATCHING_BOTTOM_KEY = 'match_bottom'
 
     def __init__(self,sequences):
         self.sequences = sequences
+        self.top_seq_dict = {}
+        self.bottom_seq_dict = {}
+        self.top_ranges_dict = {}
+        self.bottom_ranges_dict = {}
+
+    def top_ranges_dict(self):
+        return self.top_ranges_dict
 
     def find_matches(self):
         '''
@@ -24,6 +33,7 @@ class Assembler():
                  0123456789
                  GCCGGAATAC
         ATTAGACCTGCCGGAATAC
+        ATTAGACCTGCCGGAATAC
         '''
         self.seqs = {}
 
@@ -32,82 +42,51 @@ class Assembler():
 
         num_sequences = len(self.sequences)
         match_id = 0
-        self.firsts_dict = {}
-        self.seconds_dict = {}
-        self.firsts_ranges_dict = {}
-        self.seconds_ranges_dict = {}
-        for index_a in range(0,num_sequences):
+
+        for top_index in range(0, num_sequences):
             match = False
-            for index_b in range(0,num_sequences):
-                if index_a != index_b and not match:
-                    # print "matching %s VS %s" % (str(index_a), str(index_b))
-                    x = self.seqs[index_a]
-                    y = self.seqs[index_b]
-                    len_x = len(x)
-                    len_y = len(y)
-                    min_match_length = max(len_x, len_y) / 2
-                    x_start = 0
-                    y_start = 0
+            for bottom_index in range(0, num_sequences):
+                if top_index != bottom_index and not match:
+                    # print "matching %s VS %s" % (str(top_index), str(bottom_index))
+                    top_seq = self.seqs[top_index]
+                    bottom_seq = self.seqs[bottom_index]
+                    top_len = len(top_seq)
+                    bottom_len = len(bottom_seq)
+                    self.min_match_length = max(top_len, bottom_len) / 2
 
                     # matches = [("0":[3,8],"2":[0,3]), ...]
-                    for base in range(0, len_x - min_match_length):
-                        x_index = base
-                        y_index = 0
+                    for top_base in range(0, top_len - self.min_match_length):
+                        top_base_index = top_base
+                        bottom_base_index = 0
 
-                        for i in range(0,min_match_length):
-                            if x[x_index] == y[y_index]:
-                                x_index += 1
-                                y_index += 1
-                                if i == (min_match_length - 1):
-                                    # print "%s: %s" % (str(index_a), ''.join(x))
-                                    # print "%s: %s" % (str(index_b), ''.join(y))
-                                    # print "FOUND A MATCH"
-                                    # print "%s to %s"  % (base, x_index)
-                                    # print x[base:x_index]
-                                    # print "0 to %s"  % (y_index)
-                                    # print y[0:y_index]
-                                    # print
+                        for bottom_base in range(0, self.min_match_length):
+                            if top_seq[top_base_index] == bottom_seq[bottom_base_index]:
+                                top_base_index += 1
+                                bottom_base_index += 1
+                                if bottom_base == (self.min_match_length - 1):
                                     match = True
-                                    # firsts_dict:
-                                    #     {
-                                    #         'sequence_id': {
-                                    #             'match_id' : 0,
-                                    #             'second': 3
-                                    #         }
-                                    #
-                                    #     }
-                                    #
-                                    self.firsts_dict[index_a] = {
-                                        'match_id': match_id,
-                                        'second': index_b
-                                    }
-                                    # seconds_dict:
-                                    #         {
-                                    #             'sequence_id': {
-                                    #                 'match_id' : 0,
-                                    #                 'first': 3
-                                    #             }
-                                    #         }
-                                    #
-                                    self.seconds_dict[index_b] = {
-                                        'match_id': match_id,
-                                        'first': index_a
-                                    }
-                                    # firsts_ranges_dict:
-                                    #         {
-                                    #             'sequence_id': (3, 8)
-                                    #           }
-                                    # seconds_ranges_dict:
-                                    #         {
-                                    #             'sequence_id': (0, 5)
-                                    #           }
 
-                                    self.firsts_ranges_dict[index_a] = (base, x_index)
-                                    self.seconds_ranges_dict[index_b] = (0, y_index)
+                                    self.top_seq_dict[top_index] = {
+                                        Assembler.MATCHING_BOTTOM_KEY: bottom_index
+                                    }
+
+                                    self.bottom_seq_dict[bottom_index] = {
+                                        Assembler.MATCHING_TOP_KEY: top_index
+                                    }
+
+                                    self.top_ranges_dict[top_index] = (top_base, top_base_index)
+                                    self.bottom_ranges_dict[bottom_index] = (0, bottom_base_index)
                                     match_id += 1
 
                             else:
                                 break
+        pp = pprint.PrettyPrinter()
+        pp.pprint(self.top_ranges_dict)
+        pp.pprint(self.bottom_ranges_dict)
+        pp = pprint.PrettyPrinter(width=4)
+        pp.pprint(self.top_seq_dict)
+        pp.pprint(self.bottom_seq_dict)
+
         self.total_matches = match_id
 
     def assemble(self):
@@ -117,22 +96,20 @@ class Assembler():
         #start with one
         first_seq_id = 0
 
-        if first_seq_id in self.seconds_dict:
-            first_match = self.seconds_dict[first_seq_id]
-            self.order = [first_match['first'], first_seq_id]
-        elif first_seq_id in self.firsts_dict:
-            first_match = self.firsts_dict[first_seq_id]
-            self.order = [first_seq_id, first_match['second']]
-
-        print "Total matches: %s" % str(self.total_matches)
+        if first_seq_id in self.bottom_seq_dict:
+            first_match = self.bottom_seq_dict[first_seq_id]
+            self.order = [first_match[Assembler.MATCHING_TOP_KEY], first_seq_id]
+        elif first_seq_id in self.top_seq_dict:
+            first_match = self.top_seq_dict[first_seq_id]
+            self.order = [first_seq_id, first_match[Assembler.MATCHING_BOTTOM_KEY]]
 
         while len(self.order) != len(self.sequences):
             end = self.order[-1]
             start = self.order[0]
-            if end in self.firsts_dict:
-                self.order.append(self.firsts_dict[end]['second'])
-            elif start in self.seconds_dict:
-                self.order.insert(0,self.seconds_dict[start]['first'])
+            if end in self.top_seq_dict:
+                self.order.append(self.top_seq_dict[end][Assembler.MATCHING_BOTTOM_KEY])
+            elif start in self.bottom_seq_dict:
+                self.order.insert(0,self.bottom_seq_dict[start][Assembler.MATCHING_TOP_KEY])
 
         print self.order
         self.figure_out_sequence()
@@ -140,20 +117,21 @@ class Assembler():
     def figure_out_sequence(self):
         start_seq_index = 0
 
-        range_first_seq = self.firsts_ranges_dict[start_seq_index]
+        range_first_seq = self.top_ranges_dict[start_seq_index]
         stop = range_first_seq[1]
         self.sequence = self.seqs[start_seq_index][0:stop]
 
         for seq_id in self.order[1:]:
-            start = self.seconds_ranges_dict[seq_id][1]
+            start = self.bottom_ranges_dict[seq_id][1]
 
             if seq_id == self.order[-1]:
                 segment_to_add = self.seqs[seq_id][start:]
             else:
-                end = self.firsts_ranges_dict[seq_id][1]
+                end = self.top_ranges_dict[seq_id][1]
                 segment_to_add = self.seqs[seq_id][start:end]
 
             for b in segment_to_add:
                 self.sequence.append(b)
 
+        print "Assembled Response"
         print ''.join(self.sequence)

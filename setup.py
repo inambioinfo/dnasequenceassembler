@@ -9,6 +9,7 @@ setup(
     long_description=open('README.txt').read(),
     install_requires=[
         "click",
+        "pytest"
     ],
     entry_points='''
         [console_scripts]

@@ -9,7 +9,6 @@ class FASTAparser():
         self.fasta_file =fasta_file
 
     def parse(self):
-        # TODO assume sequences are multiple lines
         # TODO check that there are no more than 50 sequences
         # TODO make sure sequences don't exceed 1000 characters
         with open(self.fasta_file) as file:
@@ -27,8 +26,8 @@ class FASTAparser():
             elif ("A" in line or "T" in line or "C" in line or "G" in line):
                 sequence.append(line.strip())
         sequences.append(''.join(sequence))
-        for sequence in sequences:
-            print len(''.join(sequence))
+        # for sequence in sequences:
+        #     print len(''.join(sequence))
 
 
         # import ipdb; ipdb.set_trace()
