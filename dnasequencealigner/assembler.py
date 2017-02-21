@@ -25,7 +25,11 @@ class Assembler():
         print seqs
 
         num_sequences = len(seqs)
-        matches = []
+        match_id = 0
+        self.firsts_dict = {}
+        self.seconds_dict = {}
+        self.firsts_ranges_dict = {}
+        self.seconds_ranges_dict = {}
         for index_a in range(0,num_sequences):
             match = False
             for index_b in range(0,num_sequences):
@@ -58,42 +62,83 @@ class Assembler():
                                     # print y[0:y_index]
                                     # print
                                     match = True
-                                    matches.append(
-                                        (
-                                            (index_a, (base, x_index)),
-                                            (index_b, (0, y_index))
-                                        )
+                                    # firsts_dict:
+                                    #     {
+                                    #         'sequence_id': {
+                                    #             'match_id' : 0,
+                                    #             'second': 3
+                                    #         }
+                                    #
+                                    #     }
+                                    #
+                                    self.firsts_dict[index_a] = {
+                                        'match_id': match_id,
+                                        'second': index_b
+                                    }
+                                    # seconds_dict:
+                                    #         {
+                                    #             'sequence_id': {
+                                    #                 'match_id' : 0,
+                                    #                 'first': 3
+                                    #             }
+                                    #         }
+                                    #
+                                    self.seconds_dict[index_b] = {
+                                        'match_id': match_id,
+                                        'first': index_a
+                                    }
+                                    # firsts_ranges_dict:
+                                    #         {
+                                    #             'sequence_id': (3, 8)
+                                    #           }
+                                    # seconds_ranges_dict:
+                                    #         {
+                                    #             'sequence_id': (0, 5)
+                                    #           }
 
-                                    )
+                                    self.firsts_ranges_dict[index_a] = (base, x_index)
+                                    self.seconds_ranges_dict[index_b] = (0, y_index)
+                                    match_id += 1
 
                             else:
                                 break
-        return matches
+        self.total_matches = match_id
 
     def assemble(self):
 
-        matches = self.find_matches()
-        for index, match in enumerate(matches):
-            print "%s_match" % str(index)
-            for d in match:
-                print d
+        self.find_matches()
 
-        # start with the first one
+        #start with one
+        first_seq_id = 0
 
-        first_match = matches[0]
-        print "first_match", first_match
-        second = first_match[1][0]
-        print "second", second
+        if first_seq_id in self.seconds_dict:
+            first_match = self.seconds_dict[first_seq_id]
+            self.order = [first_match['first'], first_seq_id]
+        elif first_seq_id in self.firsts_dict:
+            first_match = self.firsts_dict[first_seq_id]
+            self.order = [first_seq_id, first_match['second']]
 
-        order = [match[0], match[1]]
-        #look through all the seconds to find the one that matches
 
-        for match in matches[1:]:
-            potential_match = match[0][1]
-            print "potential_match", potential_match
-            print "hello", second, potential_match
-            if second == potential_match:
-                order.append(match[1])
-                break
-        print order
-        #when do we stop: when we have as many matches in the order as we have  segments
+        print "Total matches: %s" % str(self.total_matches)
+        print "order: ", self.order
+
+        # for k,v in self.firsts_dict.iteritems():
+        #     print k, v
+        # print
+        # for k,v in self.seconds_dict.iteritems():
+        #     print k, v
+        #first figure out the order of matches then figure out the sequence
+        while len(self.order) != len(self.sequences):
+            end = self.order[-1]
+            start = self.order[0]
+            if end in self.firsts_dict:
+                self.order.append(self.firsts_dict[end]['second'])
+                print "appended at end", self.order
+            elif start in self.seconds_dict:
+                self.order.insert(0,self.seconds_dict[start]['first'])
+                print "appended at beggining", self.order
+
+        print self.order
+
+    def figure_out_sequence(self):
+        pass
