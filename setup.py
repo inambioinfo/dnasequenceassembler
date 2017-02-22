@@ -7,9 +7,10 @@ setup(
     packages=['dnasequenceassembler',],
     license='figures out a unique DNA sequence from overlapping DNA sequences',
     long_description=open('README.txt').read(),
-    install_requires=[
+    install_requires=['six>=1.7',
         "click",
-        "pytest"
+        "pytest",
+        "mock"
     ],
     entry_points='''
         [console_scripts]

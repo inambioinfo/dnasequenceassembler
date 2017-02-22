@@ -1,3 +1,8 @@
+MAX_SEQUENCE_LENGTH = 1000
+MAX_SEQUENCES = 50
+WARNING_SEQUENCE_LENTH_EXCEEDED = "WARNING: This DNA assembly library may not work well with sequences over 1000 bases"
+WARNING_MAX_SEQUENCES_EXCEEDED = "WARNING: This DNA assembly library may not work well with over 50 sequences"
+
 
 class FASTAparser():
     """
@@ -9,8 +14,7 @@ class FASTAparser():
         self.fasta_file =fasta_file
 
     def parse(self):
-        # TODO check that there are no more than 50 sequences
-        # TODO make sure sequences don't exceed 1000 characters
+
         with open(self.fasta_file) as file:
             content = file.readlines()
 
@@ -22,13 +26,16 @@ class FASTAparser():
                 sequence_ids.append(line.strip())
                 if len(sequence) != 0:
                     sequences.append(''.join(sequence))
+                    if len(''.join(sequence)) > MAX_SEQUENCE_LENGTH:
+                        print WARNING_SEQUENCE_LENTH_EXCEEDED
                 sequence = []
             elif ("A" in line or "T" in line or "C" in line or "G" in line):
                 sequence.append(line.strip())
         sequences.append(''.join(sequence))
-        # for sequence in sequences:
-        #     print len(''.join(sequence))
+        if len(''.join(sequence)) > MAX_SEQUENCE_LENGTH:
+            print WARNING_SEQUENCE_LENTH_EXCEEDED
 
+        if len(sequences) > MAX_SEQUENCES:
+            print WARNING_MAX_SEQUENCES_EXCEEDED
 
-        # import ipdb; ipdb.set_trace()
         return sequences
