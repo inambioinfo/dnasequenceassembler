@@ -24,7 +24,7 @@ your assembled sequence will be put in:
 result_assembled_sequence.txt
 ```
 
-#Example input:
+###Example input:
 my_fasta_sequences.txt
 ```python
 >Frag_56
@@ -37,7 +37,7 @@ AGACCTGCCG
 GCCGGAATAC
 ```
 
-#Example output:
+###Example output:
 result_assembled_sequence.txt
 ```python
 ATTAGACCTGCCGGAATAC
