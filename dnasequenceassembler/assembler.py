@@ -4,14 +4,37 @@ class Assembler():
     input: list of strings. each string is a sequences
     output: one string
     """
-    MATCHING_TOP_KEY = 'match_top'
-    MATCHING_BOTTOM_KEY = 'match_bottom'
 
     def __init__(self,sequences):
+        self.bottoms_dict_key = 'bottoms'
         self.sequences = sequences
         self.seqs = {}
         for idx, sequence in enumerate(self.sequences):
             self.seqs[idx] = list(sequence)
+
+
+    def match_two_strings(self, top_seq, bottom_seq):
+        """
+
+        """
+        top_len = len(top_seq)
+        bottom_len = len(bottom_seq)
+        min_match_length = (max(top_len, bottom_len) / 2) + 1
+        sequences_match = False
+        x = 0
+        x_stop = x + min_match_length
+        while x_stop <= top_len:
+            top_string = top_seq[x: x_stop]
+            bottom_string = bottom_seq[0:min_match_length]
+
+            if ''.join(top_string) == ''.join(bottom_string):
+                sequences_match = True
+                return True, x
+
+            x +=1
+            x_stop +=1
+
+        return sequences_match
 
 
     def _find_matching_pairs(self):
@@ -23,65 +46,40 @@ class Assembler():
             bottom_seq_dict
             top_ranges_dict
             bottom_ranges_dict
+
+            { 1: {
+                    bottoms: [0,4],
+                    2: 0,
+                    0: 4,
+                 }
+            }
         '''
-        top_seq_dict = {}
-        bottom_seq_dict = {}
-        top_ranges_dict = {}
-        bottom_ranges_dict = {}
+        match_dict = {}
 
         num_sequences = len(self.sequences)
-        match_id = 0
+        for sequence_index,sequence in self.seqs.iteritems():
+            match_dict[sequence_index] = {}
+            match_dict[sequence_index][self.bottoms_dict_key] = []
 
         for top_index in range(0, num_sequences):
-            # print 'top_index', top_index
             for bottom_index in range(0, num_sequences):
                 if top_index != bottom_index:
                     top_seq = self.seqs[top_index]
                     bottom_seq = self.seqs[bottom_index]
-                    top_len = len(top_seq)
-                    bottom_len = len(bottom_seq)
-                    self.min_match_length = (max(top_len, bottom_len) / 2) + 1
+                    print top_index, bottom_index
+                    match = self.match_two_strings(top_seq, bottom_seq)
+                    if match:
+                        start_of_match_index = match[1]
+                        match_dict[top_index][bottom_index] = start_of_match_index
+                        match_dict[top_index][self.bottoms_dict_key].append(bottom_index)
 
-                    x = 0
-                    x_stop = x + self.min_match_length
-                    while x_stop <= top_len:
-                        top_string = top_seq[x: x_stop]
-                        # print 'TOP'
-                        # print ''.join(top_string)
-
-                        y = 0
-                        y_stop = y + self.min_match_length
-                        while y_stop <= bottom_len:
-                            bottom_string = bottom_seq[y: y_stop]
-                            # print ''.join(bottom_string)
-
-                            if ''.join(top_string) == ''.join(bottom_string):
-                                # print '[x: x_stop]', x, x_stop
-                                # print '[y: y_stop]', y, y_stop
-                                top_seq_dict[top_index] = {
-                                    Assembler.MATCHING_BOTTOM_KEY: bottom_index
-                                }
-
-                                bottom_seq_dict[bottom_index] = {
-                                    Assembler.MATCHING_TOP_KEY: top_index
-                                }
-
-                                top_ranges_dict[top_index] = (x, x_stop)
-                                bottom_ranges_dict[bottom_index] = (y, y_stop)
-                                #TODO: account for almost identical sequences
-                                #TODO: FIGURE OUT WHEN TO BREAK
-
-                            y +=1
-                            y_stop +=1
-
-                        x+=1
-                        x_stop +=1
+        for top_sequence, data in match_dict.iteritems():
+            print top_sequence, ':'
+            print data
+        return match_dict
 
 
-        return top_seq_dict, bottom_seq_dict, top_ranges_dict, bottom_ranges_dict
-
-
-    def _determine_order(self, top_seq_dict, bottom_seq_dict, top_ranges_dict, bottom_ranges_dict):
+    def _determine_order(self, match_dict):
         '''
         determines the order of the sequences using the matching pairs info
 
@@ -89,12 +87,9 @@ class Assembler():
             order
 
         '''
-
-        # print 'top_seq_dict', top_seq_dict
-        # print "bottom_seq_dict", bottom_seq_dict
-        # print "top_ranges_dict", top_ranges_dict
-        # print "bottom_ranges_dict", bottom_ranges_dict
         #start with one pair
+
+
         first_seq_id = 0
         if first_seq_id in bottom_seq_dict:
             first_match = bottom_seq_dict[first_seq_id]
@@ -114,12 +109,12 @@ class Assembler():
         print 'order', order
         return order
 
+
     def assemble(self):
         '''
         assembles the sequence given the info on the pairs and the order
         '''
-        top_seq_dict, bottom_seq_dict, top_ranges_dict, bottom_ranges_dict = \
-            self._find_matching_pairs()
+        match_dict = self._find_matching_pairs()
         order = self._determine_order(top_seq_dict, bottom_seq_dict, top_ranges_dict, bottom_ranges_dict)
 
         start_seq_index = order[0]

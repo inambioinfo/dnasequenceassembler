@@ -29,7 +29,7 @@ class FASTAparser():
                     if len(''.join(sequence)) > MAX_SEQUENCE_LENGTH:
                         print WARNING_SEQUENCE_LENTH_EXCEEDED
                 sequence = []
-            elif ("A" in line or "T" in line or "C" in line or "G" in line):
+            elif line.startswith("A") or line.startswith("T") or line.startswith("C") or line.startswith("G"):
                 sequence.append(line.strip())
         sequences.append(''.join(sequence))
         if len(''.join(sequence)) > MAX_SEQUENCE_LENGTH:
