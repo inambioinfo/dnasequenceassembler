@@ -2,14 +2,9 @@ import copy
 import random
 
 class Assembler():
-    """
-    input: list of strings. each string is a sequences
-    output: one string
-    """
-
-    def __init__(self,sequences):
+    def __init__(self,fragments):
         self.fragments = {}
-        for idx, fragment in enumerate(sequences):
+        for idx, fragment in enumerate(fragments):
             self.fragments[idx] = list(fragment)
 
 
