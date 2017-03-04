@@ -19,6 +19,12 @@ $ pip install .
 $ assemble [YOUR_FILE_WITH_SEQUENCES_IN_FASTA_FORMAT]
 ```
 
+for example, run:
+
+```shell
+$ assemble dnasequenceassembler/data/sample_input.txt
+```
+
 your assembled sequence will be put in:
 ```shell
 result_assembled_sequence.txt

@@ -8,28 +8,27 @@ class Assembler():
     """
 
     def __init__(self,sequences):
-        self.bottoms_dict_key = 'bottoms'
-        self.indices_dict_key = 'indices'
-        self.sequences = sequences
-        self.seqs = {}
-        for idx, sequence in enumerate(self.sequences):
-            self.seqs[idx] = list(sequence)
+        self.fragments = {}
+        for idx, fragment in enumerate(sequences):
+            self.fragments[idx] = list(fragment)
 
 
-    def fragment_matcher(self, top_seq, bottom_seq):
+    def _fragment_matcher(self, top_fragment, bottom_fragment):
         '''
+        compares two fragments and determines match
         '''
-        top_len = len(top_seq)
-        bottom_len = len(bottom_seq)
+        top_len = len(top_fragment)
+        bottom_len = len(bottom_fragment)
         min_match_length = (max(top_len, bottom_len) / 2) + 1
-        sequences_match = False
-        bottom_string = ''.join(bottom_seq[0:min_match_length])
+        match_found = False
+        bottom_string = ''.join(bottom_fragment[0:min_match_length])
+
         x = 0
         x_stop = x + min_match_length
         while x_stop <= top_len:
-            top_string = top_seq[x: x_stop]
+            top_string = top_fragment[x: x_stop]
             if ''.join(top_string) == bottom_string:
-                sequences_match = True
+                match_found = True
                 return x
             x +=1
             x_stop +=1
@@ -37,22 +36,19 @@ class Assembler():
         return False
 
 
-    def _find_matching_pairs(self):
+    def _find_matching_fragment_pairs(self):
         '''
+        compares
         '''
         map_top_bottom = {}
         map_bottom_top = {}
 
-        num_sequences = len(self.sequences)
-
-        for ID_top in range(0, num_sequences):
-            for ID_bottom in range(0, num_sequences):
+        for ID_top, top_fragment in self.fragments.iteritems():
+            for ID_bottom, bottom_fragment in self.fragments.iteritems():
                 if ID_top != ID_bottom:
-                    top_seq = self.seqs[ID_top]
-                    bottom_seq = self.seqs[ID_bottom]
-                    match_index = self.fragment_matcher(top_seq, bottom_seq)
-                    if match_index:
+                    match_index = self._fragment_matcher(top_fragment, bottom_fragment)
 
+                    if match_index:
                         map_top_bottom[ID_top] = {
                             'ID_bottom_match' : ID_bottom,
                             'match_index' : match_index
@@ -76,27 +72,23 @@ class Assembler():
     def _determine_order(self, map_top_bottom, map_bottom_top):
         '''
         determines the order of the sequences using the matching pairs info
-
-        generates the following variables:
-            order
         '''
 
         order = []
 
-        first_seq_id = random.choice(self.seqs.keys())
-        print 'first_seq_id: ', first_seq_id
-        if first_seq_id in map_bottom_top:
-            order= [ map_bottom_top[first_seq_id]['ID_top_match'], first_seq_id ]
+        ID = random.choice(self.fragments.keys())
+        if ID in map_bottom_top:
+            order = [ map_bottom_top[ID]['ID_top_match'], ID ]
         else:
-            order = [first_seq_id, map_top_bottom[first_seq_id]['ID_bottom_match']]
+            order = [ ID, map_top_bottom[ID]['ID_bottom_match']]
 
-        while len(order) < len(self.seqs): # is this one hacky?
+        while len(order) < len(self.fragments): # is this one hacky?
             end = order[-1]
             start = order[0]
             if end in map_top_bottom:
                 order.append(map_top_bottom[end]['ID_bottom_match'])
             elif start in map_bottom_top:
-                order.insert(0,map_bottom_top[start]['ID_top_match'])
+                order.insert(0, map_bottom_top[start]['ID_top_match'])
 
         print 'order', order
         return order
@@ -106,23 +98,22 @@ class Assembler():
         '''
         assembles the sequence given the info on the pairs and the order
         '''
-        map_top_bottom, map_bottom_top = self._find_matching_pairs()
+        map_top_bottom, map_bottom_top = self._find_matching_fragment_pairs()
         order = self._determine_order(map_top_bottom, map_bottom_top)
 
-        sequence = self.seqs[order[0]]
+        sequence = self.fragments[order[0]]
         insert_index = 0
         print ''.join(sequence)
-        for ID in order[0:-1]:
 
+        for ID in order[:-1]: # last fragment ID is not in map_top_bottom
             ID_bottom_match = map_top_bottom[ID]['ID_bottom_match']
             match_index = map_top_bottom[ID]['match_index']
             insert_index += match_index
-            print '----'
-            print ''.join(sequence[insert_index: insert_index + 5])
-            print ''.join(self.seqs[ID_bottom_match][0:5])
-            sequence[insert_index:] = self.seqs[ID_bottom_match]
-            # print '_'*insert_index + ''.join(self.seqs[ID_bottom_match])
+            # print '----'
+            # print ''.join(sequence[insert_index: insert_index + 5])
+            # print ''.join(self.fragments[ID_bottom_match][0:5])
+            sequence[insert_index:] = self.fragments[ID_bottom_match]
+            print '_'*insert_index + ''.join(self.fragments[ID_bottom_match])
 
-        "Resulting assembled sequence"
-        print ''.join(sequence)
+        # Final result
         return ''.join(sequence)
