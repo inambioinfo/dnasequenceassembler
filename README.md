@@ -24,7 +24,7 @@ your assembled sequence will be put in:
 result_assembled_sequence.txt
 ```
 
-#Example input:
+###Example input:
 my_fasta_sequences.txt
 ```python
 >Frag_56
@@ -37,7 +37,7 @@ AGACCTGCCG
 GCCGGAATAC
 ```
 
-#Example output:
+###Example output:
 result_assembled_sequence.txt
 ```python
 ATTAGACCTGCCGGAATAC
@@ -53,14 +53,14 @@ $ pip install .
 $ py.test dnasequenceassembler/test.py
 ```
 
-## FASTA PARSER
+## FASTA PARSER AND FASTA SEQUENCE LIMITS
 [FASTA format](https://en.wikipedia.org/wiki/FASTA_format)
 
-1. no more than 80 characters per license
+### Fasta sequence convention
+1. no more than 80 characters per line
 2. first line of the FASTA file starts with ">"
 
-
-## LIMITS
+### sequence limitations
 
 1. at most 50 DNA sequences in FASTA format
 2. character set is limited to T/C/G/A
