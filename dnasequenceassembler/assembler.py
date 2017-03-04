@@ -26,7 +26,6 @@ class Assembler():
         bottom_string = ''.join(bottom_seq[0:min_match_length])
         x = 0
         x_stop = x + min_match_length
-        print min_match_length
         while x_stop <= top_len:
             top_string = top_seq[x: x_stop]
             if ''.join(top_string) == bottom_string:
@@ -63,13 +62,13 @@ class Assembler():
                             'ID_top_match' : ID_top
                         }
 
-        print 'TOP_BOTTOM'
-        for k,v in map_top_bottom.iteritems():
-            print k,v
-
-        print 'BOTTOM_TOP'
-        for k,v in map_bottom_top.iteritems():
-            print k,v
+        # print 'TOP_BOTTOM'
+        # for k,v in map_top_bottom.iteritems():
+        #     print k,v
+        #
+        # print 'BOTTOM_TOP'
+        # for k,v in map_bottom_top.iteritems():
+        #     print k,v
 
         return map_top_bottom, map_bottom_top
 
@@ -118,14 +117,12 @@ class Assembler():
             ID_bottom_match = map_top_bottom[ID]['ID_bottom_match']
             match_index = map_top_bottom[ID]['match_index']
             insert_index += match_index
+            print '----'
+            print ''.join(sequence[insert_index: insert_index + 5])
+            print ''.join(self.seqs[ID_bottom_match][0:5])
             sequence[insert_index:] = self.seqs[ID_bottom_match]
-            print '_'*insert_index + ''.join(self.seqs[ID_bottom_match])
-
-
+            # print '_'*insert_index + ''.join(self.seqs[ID_bottom_match])
 
         "Resulting assembled sequence"
         print ''.join(sequence)
         return ''.join(sequence)
-        #TODO: assumption unique
-        #TODO: assumption there will be only one other sequence that will match by more than half the length
-        #TODO: do I need to put the sequences into a list?
