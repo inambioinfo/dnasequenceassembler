@@ -28,12 +28,14 @@ class TestAssembler(unittest.TestCase):
         assbl._fragment_matcher(['a','b','c'], ['b','c','d'])
         assert assbl._fragment_matcher(['a','b','c'], ['b','c','d'])
 
+
     def test_find_matching_fragment_pairs(self):
         from assembler import Assembler
         assbl = Assembler(sequences, identifiers)
         c, d = assbl._find_matching_fragment_pairs()
         self.assertEqual(c, map_top_bottom)
         self.assertEqual(d, map_bottom_top)
+
 
     def test_determine_order(self):
         from assembler import Assembler
@@ -42,6 +44,7 @@ class TestAssembler(unittest.TestCase):
         d = map_bottom_top
         o = assbl._determine_order(c,d)
         self.assertEqual(o, order)
+
 
     def test_assemble(self):
         from assembler import Assembler

@@ -36,14 +36,22 @@ Options:
   --show / --no-show  prints resulting order of fragments identifiers
 ```
 
-### Example
+#### Example usage
 
 ```shell
-$ assemble dnasequenceassembler/data/sample_input.txt result.txt
+$ assemble --show dnasequenceassembler/data/sample_input.txt result.txt
 ```
 
-### Example input:
-my_fasta_sequences.txt
+#### Example output in the commandline via --show
+```shell
+>Frag_56
+>Frag_58
+>Frag_57
+>Frag_59
+```
+
+#### Example FASTA_FILE
+sample_input.txt
 ```python
 >Frag_56
 ATTAGACCTG
@@ -51,12 +59,12 @@ ATTAGACCTG
 CCTGCCGGAA
 >Frag_58
 AGACCTGCCG
-  >Frag_59
+>Frag_59
 GCCGGAATAC
 ```
 
-###Example output:
-result_assembled_sequence.txt
+#### Example OUTPUT_FILE
+result.txt
 ```python
 ATTAGACCTGCCGGAATAC
 ```

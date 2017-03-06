@@ -1,4 +1,3 @@
-import copy
 import random
 
 
@@ -118,7 +117,7 @@ class Assembler():
         else:
             order = [ ID, map_top_bottom[ID]['ID_bottom_match']]
 
-        while len(order) < len(self.fragments): # is this one hacky?
+        while len(order) < len(self.fragments):
             end = order[-1]
             start = order[0]
             if end in map_top_bottom:
