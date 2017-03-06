@@ -17,27 +17,32 @@ Two fragments are considered to overlap if they match exactly by more than half 
 Python 2.7
 ```
 
+### Install
+
 ```shell
 $ git clone https://github.com/paolacastro/dnasequenceassembler.git
 $ cd dnasequenceassembler
 $ virtualenv venv
 $ . venv/bin/activate
 $ pip install .
-$ assemble [YOUR_FILE_WITH_SEQUENCES_IN_FASTA_FORMAT]
 ```
 
-for example, run:
+### Usage
 
 ```shell
-$ assemble dnasequenceassembler/data/sample_input.txt
+Usage: assemble [OPTIONS] FASTA_FILE OUTPUT_FILE
+
+Options:
+  --show / --no-show  prints resulting order of fragments identifiers
 ```
 
-your assembled sequence will be put in:
+### Example
+
 ```shell
-result_assembled_sequence.txt
+$ assemble dnasequenceassembler/data/sample_input.txt result.txt
 ```
 
-###Example input:
+### Example input:
 my_fasta_sequences.txt
 ```python
 >Frag_56
@@ -46,7 +51,7 @@ ATTAGACCTG
 CCTGCCGGAA
 >Frag_58
 AGACCTGCCG
->Frag_59
+  >Frag_59
 GCCGGAATAC
 ```
 
