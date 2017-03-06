@@ -52,7 +52,7 @@ class TestAssembler(unittest.TestCase):
 class TestFastaParser(unittest.TestCase):
 
     def test_fasta_parser(self):
-        from fastaparser import FASTAparser
-        fap = FASTAparser('dnasequenceassembler/data/sample_input.txt')
+        from fastaparser import FastaParser
+        fap = FastaParser('dnasequenceassembler/data/sample_input.txt')
         seqs = fap.parse()
         self.assertEqual(seqs, sequences)

@@ -11,7 +11,14 @@ Two fragments are considered to overlap if they match exactly by more than half 
 
 ## HOW TO USE
 
+### Requirements
+
+```
+Python 2.7
+```
+
 ```shell
+$ git clone https://github.com/paolacastro/dnasequenceassembler.git
 $ cd dnasequenceassembler
 $ virtualenv venv
 $ . venv/bin/activate

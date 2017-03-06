@@ -4,7 +4,7 @@ WARNING_SEQUENCE_LENTH_EXCEEDED = "WARNING: This DNA assembly library may not wo
 WARNING_MAX_SEQUENCES_EXCEEDED = "WARNING: This DNA assembly library may not work well with over 50 sequences"
 
 
-class FASTAparser():
+class FastaParser():
     """
     input: text file with dna sequences in FASTA format_filename
     output: a list of strings. each string being a sequence
